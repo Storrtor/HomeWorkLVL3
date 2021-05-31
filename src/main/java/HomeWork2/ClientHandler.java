@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -40,11 +43,10 @@ public class ClientHandler {
                 @Override
                 public void run() {
                     try {
-                        if(authentication() == true) {
-                            readMessages();
-                            closeConnectionForAuthClients();
-                        }
-                    } catch (IOException e) {
+                        authentication();
+                        readMessages();
+                        closeConnectionForAuthClients();
+                    } catch (IOException | SQLException e) {
                         e.printStackTrace();
                     } finally {
                         System.out.println("Закрываем соединение");
@@ -60,24 +62,39 @@ public class ClientHandler {
 
     private void readMessages() throws IOException {
         while (true) {
-            String messageFromClient = inputStream.readUTF();
-            System.out.println("from " + name + ": " + messageFromClient); //отправка только в консоль, никуда больше
-            if (messageFromClient.equals(ChatConstants.STOP_WORD)) {
-                return;
-            }
-            if (messageFromClient.startsWith(ChatConstants.PRIVATE_MESSAGE)) {
-                server.broadcastMessageToOne(name, "[" + name + "]: " + messageFromClient);
-            } else if (messageFromClient.startsWith(ChatConstants.SEND_TO_LIST)) {
-                String[] splittedStr = messageFromClient.split("\\s+");
-                List<String> nicknames = new ArrayList<>();
-                for (int i = 1; i < splittedStr.length - 1; i++) {
-                    nicknames.add(splittedStr[i]);
+            try {
+                String messageFromClient = inputStream.readUTF();
+                System.out.println("from " + name + ": " + messageFromClient); //отправка только в консоль, никуда больше
+                if (messageFromClient.equals(ChatConstants.STOP_WORD)) {
+                    return;
                 }
-            } else if (messageFromClient.startsWith(ChatConstants.CLIENTS_LIST)) {
-                server.broadcastClients();
-            } else {
-                server.broadcastMessage("[" + name + "]: " + messageFromClient); //распространение сообщения по всем клиентам
+                if (messageFromClient.startsWith(ChatConstants.PRIVATE_MESSAGE)) {
+                    server.broadcastMessageToOne(name, "[" + name + "]: " + messageFromClient);
+                } else if (messageFromClient.startsWith(ChatConstants.SEND_TO_LIST)) {
+                    String[] splittedStr = messageFromClient.split("\\s+");
+                    List<String> nicknames = new ArrayList<>();
+                    for (int i = 1; i < splittedStr.length - 1; i++) {
+                        nicknames.add(splittedStr[i]);
+                    }
+                } else if (messageFromClient.startsWith(ChatConstants.CLIENTS_LIST)) {
+                    server.broadcastClients();
+                    //2. Смена ника
+                } else if (messageFromClient.startsWith(ChatConstants.CHANGE_NICK)) {
+                    String[] splittedStr = messageFromClient.split("\\s+");
+                    if(!server.isNickBusy(splittedStr[1])){
+                        String oldname = name;
+                        name = splittedStr[1];
+                        server.broadcastMessage(oldname + " сменил ник на " + name);
+                    } else {
+                        sendMsg("Ник уже занят");
+                    }
+                } else {
+                    server.broadcastMessage("[" + name + "]: " + messageFromClient); //распространение сообщения по всем клиентам
+                }
+            } catch (IndexOutOfBoundsException ex) {
+                sendMsg("Неверная команда");
             }
+
         }
     }
 
@@ -87,38 +104,41 @@ public class ClientHandler {
      * (120 сек. ждём после подключения клиента, и если он не авторизовался за это время, закрываем соединение).
      */
     // /auth login pass
-    private boolean authentication() throws IOException {
-        long start = System.currentTimeMillis();
-        while (true && System.currentTimeMillis() - start < ChatConstants.TIME_OUT) {
-            try{
-                this.socket.setSoTimeout(ChatConstants.TIME_OUT);
-                String message = inputStream.readUTF();
-                if (message.startsWith(ChatConstants.AUTH_COMMAND)) {
+    public void authentication() throws IOException, SQLException {
+        while (true) {
+            Timer timer = new Timer();
+            TimerTask StopApp = new TimerTask() {
+                @Override
+                public void run() {
+                    closeConnectionForAllClients();
+                }
+            };
+            timer.schedule(StopApp, ChatConstants.TIME_OUT);
+            String message = inputStream.readUTF();
+            if (message.startsWith(ChatConstants.AUTH_COMMAND)) {
+                try {
                     String[] parts = message.split("\\s+");
                     String nick = server.getAuthService().getNickByLoginAndPass(parts[1], parts[2]);
                     if (nick != null) {
-                        //проверим, что такого пока нет
+                        //проверим что пользователя с таким ником нет
                         if (!server.isNickBusy(nick)) {
                             sendMsg(ChatConstants.AUTH_OK + " " + nick);
                             name = nick;
                             server.subscribe(this);
-                            server.broadcastMessage(name + " entered the chat");
-                            socket.setSoTimeout(0);
-                            return true;
+                            server.broadcastMessage(name + " вошел в чат");
+                            timer.cancel();
+                            return;
                         } else {
-                            sendMsg("Nick is already in use");
+                            sendMsg("Ник уже используется");
                         }
-                    } else {
-                        sendMsg("Incorrect login/pass");
                     }
+                } catch (ArrayIndexOutOfBoundsException | SQLException ex) {
+                    sendMsg("Неверные логин/пароль");
                 }
-            } catch (SocketException | EOFException | SocketTimeoutException se) {
-                System.out.println("Закрываем соединение");
-                se.printStackTrace();
-                closeConnectionForAllClients();
+            } else {
+                sendMsg("Неверные логин/пароль");
             }
         }
-        return false;
     }
 
 

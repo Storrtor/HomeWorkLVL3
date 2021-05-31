@@ -1,5 +1,7 @@
 package HomeWork2;
 
+import java.sql.SQLException;
+
 /**
  * Сервис авторизации
  */
@@ -17,5 +19,5 @@ public interface AuthService {
     /**
      * получить ник
      */
-    String getNickByLoginAndPass(String login, String pass);
+    String getNickByLoginAndPass(String login, String pass) throws SQLException;
 }

@@ -14,9 +14,11 @@ public class ChatConstants {
 
     public static final String SEND_TO_LIST = "/list";
 
+    public static final String CHANGE_NICK = "/upnick";
+
     public static final int PORT = 8189;
 
     public static final String CLIENTS_LIST = "/clients";
 
-    public static final int TIME_OUT = 120_00;
+    public static final int TIME_OUT = 120_000;
 }
