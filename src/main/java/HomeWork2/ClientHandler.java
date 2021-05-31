@@ -83,9 +83,9 @@ public class ClientHandler {
                 } else if (messageFromClient.startsWith(ChatConstants.CHANGE_NICK)) {
                     String[] splittedStr = messageFromClient.split("\\s+");
                     if(!server.isNickBusy(splittedStr[1])){
-                        String oldname = name;
+                        String oldName = name;
                         name = splittedStr[1];
-                        server.broadcastMessage(oldname + " сменил ник на " + name);
+                        server.broadcastMessage(oldName + " сменил ник на " + name);
                     } else {
                         sendMsg("Ник уже занят");
                     }
