@@ -78,6 +78,7 @@ public class ClientHandler {
                     }
                 } else if (messageFromClient.startsWith(ChatConstants.CLIENTS_LIST)) {
                     server.broadcastClients();
+
                     //2. Смена ника
                 } else if (messageFromClient.startsWith(ChatConstants.CHANGE_NICK)) {
                     String[] splittedStr = messageFromClient.split("\\s+");
@@ -98,11 +99,6 @@ public class ClientHandler {
         }
     }
 
-    /**
-     * 1. Разобраться с кодом.
-     * 2. Добавить отключение неавторизованных пользователей по таймауту
-     * (120 сек. ждём после подключения клиента, и если он не авторизовался за это время, закрываем соединение).
-     */
     // /auth login pass
     public void authentication() throws IOException, SQLException {
         while (true) {
