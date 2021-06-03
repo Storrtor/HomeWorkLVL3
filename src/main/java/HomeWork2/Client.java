@@ -4,9 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -21,6 +19,9 @@ public class Client extends JFrame {
 
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
+
+    private File file;
+
 
     public Client() {
         try {
@@ -59,12 +60,14 @@ public class Client extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
+
                 try {
                     outputStream.writeUTF(ChatConstants.STOP_WORD);
 //                    closeConnection();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+
             }
         });
 
@@ -82,7 +85,10 @@ public class Client extends JFrame {
                     //авторизация
                     while (true) {
                         String strFromServer = inputStream.readUTF();
-                        if (strFromServer.equals(ChatConstants.AUTH_OK)) {
+                        if (strFromServer.startsWith(ChatConstants.AUTH_OK)) {
+                            String[] parts = strFromServer.split("\\s+");
+                            String nick = parts[1];
+                            makeFile(nick);
                             break;
                         }
                         chatArea.append(strFromServer);
@@ -90,7 +96,9 @@ public class Client extends JFrame {
                     }
                     //чтение
                     while (true) {
+                        //Загрузка сообщений
                         String strFromServer = inputStream.readUTF();
+
                         if (strFromServer.equals(ChatConstants.STOP_WORD)) {
                             break;
                         } else if (strFromServer.startsWith(ChatConstants.CLIENTS_LIST)) {
@@ -129,6 +137,9 @@ public class Client extends JFrame {
     private void sendMessage() {
         if (!inputField.getText().trim().isEmpty()) {
             try {
+                if(file != null) {
+                    makeHistory(file);
+                }
                 outputStream.writeUTF(inputField.getText());
                 inputField.setText("");
                 inputField.grabFocus();
@@ -136,6 +147,43 @@ public class Client extends JFrame {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Send error occured");
             }
+        }
+    }
+
+    public File makeFile(String nick) {
+        System.out.println("Заходим в метод");
+        file = new File("chatHistory" + nick + ".txt");
+        return file;
+    }
+
+
+    public void makeHistory(File file) {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+        System.out.println("Пишем в файл");
+        try (
+                DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(file, true))
+        ) {
+            dataOutputStream.writeUTF(inputField.getText());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+//            }
+//        }).start();
+
+
+    }
+
+    public void loadHistory(File file) {
+        try (
+                DataInputStream dataInputStream = new DataInputStream(new FileInputStream(file))
+        ) {
+            while (dataInputStream.available() != -1) {
+                chatArea.append(String.valueOf(dataInputStream));
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 

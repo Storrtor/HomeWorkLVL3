@@ -11,7 +11,7 @@ public class DataBaseUsers implements AuthService {
 //        DataBaseUsers dataBaseUsers = new DataBaseUsers();
 //        try {
 //            dataBaseUsers.connect();
-//            dataBaseUsers.read();
+//
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        } finally {
@@ -88,7 +88,6 @@ public class DataBaseUsers implements AuthService {
             return rs.getString(1);
         }
     }
-
 
     @Override
     public void start() {

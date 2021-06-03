@@ -1,5 +1,6 @@
 package HomeWork2;
 
+import java.awt.event.WindowAdapter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -27,6 +28,13 @@ public class ClientHandler {
     private DataOutputStream outputStream;
 
     private String name;
+
+    private boolean isAuth = false;
+
+    public boolean isAuth() {
+        return isAuth;
+    }
+
 
     public String getName() {
         return name;
@@ -78,8 +86,7 @@ public class ClientHandler {
                     }
                 } else if (messageFromClient.startsWith(ChatConstants.CLIENTS_LIST)) {
                     server.broadcastClients();
-
-                    //2. Смена ника
+                //2. Смена ника
                 } else if (messageFromClient.startsWith(ChatConstants.CHANGE_NICK)) {
                     String[] splittedStr = messageFromClient.split("\\s+");
                     if(!server.isNickBusy(splittedStr[1])){
@@ -123,6 +130,7 @@ public class ClientHandler {
                             server.subscribe(this);
                             server.broadcastMessage(name + " вошел в чат");
                             timer.cancel();
+                            isAuth = true;
                             return;
                         } else {
                             sendMsg("Ник уже используется");
@@ -136,6 +144,8 @@ public class ClientHandler {
             }
         }
     }
+
+
 
 
     public void sendMsg(String message) {
@@ -183,6 +193,7 @@ public class ClientHandler {
             e.printStackTrace();
         }
     }
+
 
 
 }
