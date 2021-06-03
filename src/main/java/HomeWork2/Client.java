@@ -22,7 +22,6 @@ public class Client extends JFrame {
 
     private File file;
 
-
     public Client() {
         try {
             openConnection();
@@ -42,7 +41,9 @@ public class Client extends JFrame {
         chatArea = new JTextArea();
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
+
         add(new JScrollPane(chatArea), BorderLayout.CENTER);
+
 
         //down pannel
         JPanel panel = new JPanel(new BorderLayout());
@@ -56,14 +57,14 @@ public class Client extends JFrame {
         sendButton.addActionListener(e -> sendMessage());
         inputField.addActionListener(e -> sendMessage());
 
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-
                 try {
                     outputStream.writeUTF(ChatConstants.STOP_WORD);
-//                    closeConnection();
+                    closeConnection();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -89,6 +90,7 @@ public class Client extends JFrame {
                             String[] parts = strFromServer.split("\\s+");
                             String nick = parts[1];
                             makeFile(nick);
+                            loadHistory(nick);
                             break;
                         }
                         chatArea.append(strFromServer);
@@ -98,7 +100,9 @@ public class Client extends JFrame {
                     while (true) {
                         //Загрузка сообщений
                         String strFromServer = inputStream.readUTF();
-
+                        if (file != null) {
+                            makeHistory(file, strFromServer);
+                        }
                         if (strFromServer.equals(ChatConstants.STOP_WORD)) {
                             break;
                         } else if (strFromServer.startsWith(ChatConstants.CLIENTS_LIST)) {
@@ -137,9 +141,6 @@ public class Client extends JFrame {
     private void sendMessage() {
         if (!inputField.getText().trim().isEmpty()) {
             try {
-                if(file != null) {
-                    makeHistory(file);
-                }
                 outputStream.writeUTF(inputField.getText());
                 inputField.setText("");
                 inputField.grabFocus();
@@ -157,30 +158,25 @@ public class Client extends JFrame {
     }
 
 
-    public void makeHistory(File file) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
+    public void makeHistory(File file, String str) {
         System.out.println("Пишем в файл");
         try (
                 DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(file, true))
         ) {
-            dataOutputStream.writeUTF(inputField.getText());
+            dataOutputStream.writeUTF(str + "\n");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-//            }
-//        }).start();
-
-
     }
 
-    public void loadHistory(File file) {
+    public void loadHistory(String nick) {
         try (
-                DataInputStream dataInputStream = new DataInputStream(new FileInputStream(file))
+                FileInputStream fileInputStream = new FileInputStream("chatHistory" + nick + ".txt");
+                DataInputStream dataInputStream = new DataInputStream(fileInputStream);
         ) {
-            while (dataInputStream.available() != -1) {
-                chatArea.append(String.valueOf(dataInputStream));
+            while (dataInputStream.available() > 100) {
+                String str = dataInputStream.readUTF();
+                chatArea.append(str);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
