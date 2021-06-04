@@ -29,13 +29,6 @@ public class ClientHandler {
 
     private String name;
 
-    private boolean isAuth = false;
-
-    public boolean isAuth() {
-        return isAuth;
-    }
-
-
     public String getName() {
         return name;
     }
@@ -130,7 +123,6 @@ public class ClientHandler {
                             server.subscribe(this);
                             server.broadcastMessage(name + " вошел в чат");
                             timer.cancel();
-                            isAuth = true;
                             return;
                         } else {
                             sendMsg("Ник уже используется");
