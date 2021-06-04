@@ -22,4 +22,6 @@ public class ChatConstants {
 
     public static final int TIME_OUT = 120_000;
 
+    public static final int CHAT_HISTORY = 100;
+
 }

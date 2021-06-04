@@ -1,6 +1,7 @@
 package HomeWork2;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -39,8 +40,11 @@ public class Client extends JFrame {
 
         //Message area
         chatArea = new JTextArea();
+        DefaultCaret caret = (DefaultCaret) chatArea.getCaret();         //авто скрол
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);              //авто скрол
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
+
 
         add(new JScrollPane(chatArea), BorderLayout.CENTER);
 
@@ -54,8 +58,13 @@ public class Client extends JFrame {
         panel.add(inputField, BorderLayout.CENTER);
         add(panel, BorderLayout.SOUTH);
 
-        sendButton.addActionListener(e -> sendMessage());
-        inputField.addActionListener(e -> sendMessage());
+        sendButton.addActionListener(e -> {
+
+            sendMessage();
+        });
+        inputField.addActionListener(e -> {
+            sendMessage();
+        });
 
 
         addWindowListener(new WindowAdapter() {
@@ -89,6 +98,7 @@ public class Client extends JFrame {
                         if (strFromServer.startsWith(ChatConstants.AUTH_OK)) {
                             String[] parts = strFromServer.split("\\s+");
                             String nick = parts[1];
+                            //Создание файла, загрузка истории
                             makeFile(nick);
                             loadHistory(nick);
                             break;
@@ -100,6 +110,7 @@ public class Client extends JFrame {
                     while (true) {
                         //Загрузка сообщений
                         String strFromServer = inputStream.readUTF();
+                        //сохранение истории
                         if (file != null) {
                             makeHistory(file, strFromServer);
                         }
@@ -152,32 +163,67 @@ public class Client extends JFrame {
     }
 
     public File makeFile(String nick) {
-        System.out.println("Заходим в метод");
+        System.out.println("Создаем файл");
         file = new File("chatHistory" + nick + ".txt");
         return file;
     }
 
 
+    /**
+     * Создание истории
+     */
     public void makeHistory(File file, String str) {
         System.out.println("Пишем в файл");
         try (
-                DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(file, true))
+                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true))
         ) {
-            dataOutputStream.writeUTF(str + "\n");
+            bufferedWriter.write(str + "\n");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
+    /**
+     * Привет Жень.
+     *
+     * Осознаю, что изобрела велосипед, но, честно, вот вообще не поняла как посчитать строчки,
+     * если классы постоянно везде считают байты и предлагают переставлять курсор с помощью RandomAccessFile методов seek и getFilePointer
+     * тоже на основе байтов (если я правильно поняла этот класс и его методы).
+     *
+     * Поэтому загрузка истории вот такая волшебная. Надеюсь на твою помощь, ибо понимаю, что то, что я сделала очень страшно,
+     * но хоть работает)
+     */
     public void loadHistory(String nick) {
         try (
-                FileInputStream fileInputStream = new FileInputStream("chatHistory" + nick + ".txt");
-                DataInputStream dataInputStream = new DataInputStream(fileInputStream);
+                FileReader fileReader = new FileReader("chatHistory" + nick + ".txt");
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+                FileReader fileReader2 = new FileReader("chatHistory" + nick + ".txt");
+                BufferedReader bufferedReader2 = new BufferedReader(fileReader2);
         ) {
-            while (dataInputStream.available() > 100) {
-                String str = dataInputStream.readUTF();
-                chatArea.append(str);
+            //Считывает построчно и считает кол-во строчек
+            int count = 0;
+            String str = bufferedReader.readLine();
+            while (str != null){
+                str = bufferedReader.readLine();
+                count++;
             }
+            //Считывает с нужной строчки
+            int count2 = 0;
+            int startNubmer = count - ChatConstants.CHAT_HISTORY;
+            String str2 = bufferedReader2.readLine();
+            while (str2 != null) {
+                if(count2 >= startNubmer){
+                    str2 = bufferedReader2.readLine();
+                    if(str2 != null) {
+                        chatArea.append(str2 + "\n");
+                    }
+                } else {
+                    str2 = bufferedReader2.readLine();
+                }
+                count2++;
+            }
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -193,4 +239,5 @@ public class Client extends JFrame {
             e.printStackTrace();
         }
     }
+
 }
