@@ -1,1 +1,32 @@
-[/clients  nick4][nick4 вошел в чат][[nick4]: sdfsdf][[nick4]: sdfsdfsfd][[nick4]: привет][[nick4]: пием][[nick4]: 1][[nick4]: 2][[nick4]: 3][[nick4]: 4][[nick4]: 5][/clients  nick4][nick4 вошел в чат][[nick4]: 1][[nick4]: 2][[nick4]: 3][[nick4]: 4][[nick4]: 5][[nick4]: 6][[nick4]: 7][[nick4]: 8][[nick4]: 9][[nick4]: 10][/clients  nick4][nick4 вошел в чат][/clients  nick4][nick4 вошел в чат][/clients  nick4][nick4 вошел в чат]
+/clients  nick4
+nick4 вошел в чат
+[nick4]: привет
+[nick4]: 1
+[nick4]: 2
+[nick4]: 3
+[nick4]: 4
+[nick4]: 5
+[nick4]: 6
+[nick4]: 7
+[nick4]: 8
+[nick4]: 9
+[nick4]: 10
+/clients  nick4
+nick4 вошел в чат
+/clients  nick4
+nick4 вошел в чат
+/clients  nick4
+nick4 вошел в чат
+/clients  nick4
+nick4 вошел в чат
+[nick4]: /утв
+/clients  nick4
+nick4 вошел в чат
+/clients  nick4
+nick4 вошел в чат
+/clients  nick4
+nick4 вошел в чат
+/clients  nick4
+nick4 вошел в чат
+/clients  nick4
+nick4 вошел в чат
