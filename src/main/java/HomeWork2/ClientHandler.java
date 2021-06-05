@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * Обслуживает клиента (отвечает за связь между клиентом и сервером)
@@ -22,7 +21,8 @@ public class ClientHandler {
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(6);
+    private ExecutorService executorService = Executors.newFixedThreadPool(2);
+    private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(2);
 
     private String name;
 
@@ -99,14 +99,13 @@ public class ClientHandler {
     // /auth login pass
     public void authentication() throws IOException, SQLException {
         while (true) {
-            Timer timer = new Timer();
-            TimerTask stopApp = new TimerTask() {
+            Runnable task = new Runnable() {
                 @Override
                 public void run() {
                     closeConnectionForAllClients();
                 }
             };
-            timer.schedule(stopApp, ChatConstants.TIME_OUT);
+            scheduledThreadPoolExecutor.schedule(task, ChatConstants.TIME_OUT, TimeUnit.MILLISECONDS);
 
             String message = inputStream.readUTF();
             if (message.startsWith(ChatConstants.AUTH_COMMAND)) {
@@ -120,7 +119,14 @@ public class ClientHandler {
                             name = nick;
                             server.subscribe(this);
                             server.broadcastMessage(name + " вошел в чат");
-                            timer.cancel();
+                            //Метод remove почему-то не удаляет задачу
+//                            System.out.println(scheduledThreadPoolExecutor.remove(task)
+
+                            //Вроде как, если я правильно прочитала спецификацию оракла, я просто вырублю текущую задачу
+                            // и тем самым отключу таймер, если пользователь авторизуется
+                            //Я хотела отменить исполнение задачи, если время истекло, нашла только такой выход,
+                            // не уверена насколько корректно это работает с точки зрения переиспользования потоков
+                            scheduledThreadPoolExecutor.shutdownNow();
                             return;
                         } else {
                             sendMsg("Ник уже используется");
@@ -164,7 +170,8 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        executorService.shutdown();
+        scheduledThreadPoolExecutor.shutdown();
     }
 
     public void closeConnectionForAllClients() {
@@ -183,6 +190,8 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        executorService.shutdown();
+        scheduledThreadPoolExecutor.shutdown();
 
     }
 

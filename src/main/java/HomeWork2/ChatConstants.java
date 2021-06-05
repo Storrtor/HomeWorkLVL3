@@ -20,7 +20,7 @@ public class ChatConstants {
 
     public static final String CLIENTS_LIST = "/clients";
 
-    public static final int TIME_OUT = 120_000;
+    public static final int TIME_OUT = 120_00;
 
     public static final int CHAT_HISTORY = 100;
 
