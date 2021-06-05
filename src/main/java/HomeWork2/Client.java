@@ -230,4 +230,15 @@ public class Client extends JFrame {
             ex.printStackTrace();
         }
     }
+
+    public static void main(String[] args) {
+        try {
+            SwingUtilities.invokeAndWait(Client::new);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
