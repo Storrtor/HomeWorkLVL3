@@ -7,8 +7,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Client extends JFrame {
 
@@ -185,11 +187,11 @@ public class Client extends JFrame {
 
     /**
      * Привет Жень.
-     *
+     * <p>
      * Осознаю, что изобрела велосипед, но, честно, вот вообще не поняла как посчитать строчки,
      * если классы постоянно везде считают байты и предлагают переставлять курсор с помощью RandomAccessFile методов seek и getFilePointer
      * тоже на основе байтов (если я правильно поняла этот класс и его методы).
-     *
+     * <p>
      * Поэтому загрузка истории вот такая волшебная. Надеюсь на твою помощь, ибо понимаю, что то, что я сделала очень страшно,
      * но хоть работает)
      */
@@ -204,7 +206,7 @@ public class Client extends JFrame {
             //Считывает построчно и считает кол-во строчек
             int count = 0;
             String str = bufferedReader.readLine();
-            while (str != null){
+            while (str != null) {
                 str = bufferedReader.readLine();
                 count++;
             }
@@ -213,9 +215,9 @@ public class Client extends JFrame {
             int startNubmer = count - ChatConstants.CHAT_HISTORY;
             String str2 = bufferedReader2.readLine();
             while (str2 != null) {
-                if(count2 >= startNubmer){
+                if (count2 >= startNubmer) {
                     str2 = bufferedReader2.readLine();
-                    if(str2 != null) {
+                    if (str2 != null) {
                         chatArea.append(str2 + "\n");
                     }
                 } else {
@@ -228,16 +230,4 @@ public class Client extends JFrame {
             ex.printStackTrace();
         }
     }
-
-
-    public static void main(String[] args) {
-        try {
-            SwingUtilities.invokeAndWait(Client::new);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
 }
