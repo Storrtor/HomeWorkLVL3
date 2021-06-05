@@ -7,7 +7,7 @@ public class Apple extends Fruit{
     public Apple() {
     }
 
-    public static float getWEIGHT() {
+    public float getWEIGHT() {
         return WEIGHT;
     }
 

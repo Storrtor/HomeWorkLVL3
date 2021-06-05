@@ -12,7 +12,7 @@ public class Box <T extends Fruit>{
         someFruits.addAll(Arrays.asList(fruit));
     }
 
-    public void remove(T... fruit){
+    public void remove(T fruit){
         someFruits.remove(fruit);
     }
 
@@ -30,7 +30,7 @@ public class Box <T extends Fruit>{
     public float getWeight(){
         float weight = 0;
             for (T someFruit : someFruits) {
-                weight += someFruit.getWEIGHT(someFruit);
+                weight += someFruit.getWEIGHT();
             }
         return weight;
     }
@@ -56,8 +56,6 @@ public class Box <T extends Fruit>{
         //Жень, не поняла как сделать так, чтобы в одном цикле/стриме и добавлять из одного в другой и удалять.
         //При прохождении выкидывает ошибку ConcurrentModificationException
         //Я выкрутилась просто вставив цикл ниже, но мне каежтся это не самое лучшее решение
-        for (int i = 0; this.someFruits.size() != 0; i++) {
-            this.someFruits.remove(0);
-        }
+        this.someFruits.clear();
     }
 }

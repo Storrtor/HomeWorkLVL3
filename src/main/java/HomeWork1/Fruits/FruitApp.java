@@ -24,8 +24,8 @@ public class FruitApp {
         Box<Orange> orangeBox1 = new Box<>();
         orangeBox1.add(new Orange(), new Orange(), new Orange());
 
-        System.out.println(appleBox.getWeight());
-        System.out.println(orangeBox.getWeight());
+        System.out.println("Вес яблок = " + appleBox.getWeight());
+        System.out.println("Вес апельсинов = " + orangeBox.getWeight());
         System.out.println(appleBox.compare(orangeBox));
         System.out.println("-----------");
         System.out.println("-----------");
@@ -33,6 +33,11 @@ public class FruitApp {
         System.out.println("-----------");
 
         System.out.println(orangeBox);
+        orangeBox.remove(orange);
+        System.out.println(orangeBox);
+
+        System.out.println("----");
+
         System.out.println(orangeBox1);
         orangeBox.changeBox(orangeBox1);
         System.out.println(orangeBox);

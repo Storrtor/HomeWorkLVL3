@@ -7,7 +7,7 @@ public class Orange extends Fruit{
     public Orange() {
     }
 
-    public static float getWEIGHT() {
+    public float getWEIGHT() {
         return WEIGHT;
     }
 

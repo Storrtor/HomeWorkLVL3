@@ -7,13 +7,7 @@ public abstract class Fruit {
     public Fruit() {
     }
 
-    public float getWEIGHT(Fruit fruit) {
-        if(fruit instanceof Apple){
-            return ((Apple) fruit).getWEIGHT();
-        } else if(fruit instanceof Orange){
-            return ((Orange) fruit).getWEIGHT();
-        } else {
-            throw new RuntimeException("Нет веса данного вида фруктов");
-        }
+    public float getWEIGHT() {
+        return WEIGHT;
     }
 }
