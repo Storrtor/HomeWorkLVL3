@@ -3,8 +3,8 @@ package HomeWork2;
 import java.sql.*;
 
 public class DataBaseUsers implements AuthService {
-    private Connection connection;
-    private Statement stmt;
+    private static Connection connection;
+    private static Statement stmt;
 
 //main тоже не использую в чатике, но для управления бд он мне нужен
 //    public static void main(String[] args) {
@@ -20,7 +20,7 @@ public class DataBaseUsers implements AuthService {
 //    }
 
     private void connect() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:sqlite:javadb.db");
+        connection = DriverManager.getConnection(ChatConstants.DATABASE_URL);
         stmt = connection.createStatement();
     }
 
