@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -21,6 +22,8 @@ import java.util.concurrent.Future;
  * Обслуживает клиента (отвечает за связь между клиентом и сервером)
  */
 public class ClientHandler {
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(6);
 
     private MyServer server;
     private Socket socket;
@@ -40,8 +43,7 @@ public class ClientHandler {
             this.inputStream = new DataInputStream(socket.getInputStream());
             this.outputStream = new DataOutputStream(socket.getOutputStream());
             this.name = "";
-            new Thread(new Runnable() {
-                @Override
+            executorService.execute(new Runnable() {
                 public void run() {
                     try {
                         authentication();
@@ -54,7 +56,7 @@ public class ClientHandler {
                         closeConnectionForAllClients();
                     }
                 }
-            }).start();
+            });
         } catch (IOException ex) {
             System.out.println("Problem with client creating");
         }
@@ -103,13 +105,14 @@ public class ClientHandler {
     public void authentication() throws IOException, SQLException {
         while (true) {
             Timer timer = new Timer();
-            TimerTask StopApp = new TimerTask() {
+            TimerTask stopApp;
+            executorService.execute(stopApp = new TimerTask() {
                 @Override
                 public void run() {
                     closeConnectionForAllClients();
                 }
-            };
-            timer.schedule(StopApp, ChatConstants.TIME_OUT);
+            });
+            timer.schedule(stopApp, ChatConstants.TIME_OUT);
             String message = inputStream.readUTF();
             if (message.startsWith(ChatConstants.AUTH_COMMAND)) {
                 try {
