@@ -77,6 +77,11 @@ public class DataBaseUsers implements AuthService {
 //        stmt.executeUpdate("DELETE FROM users WHERE nick = '" + nick + "';");
 //    }
 
+    private void updateNick(String newName, String oldName) throws SQLException {
+        String str = "UPDATE users SET nick = '" + newName + "' WHERE name = '" + oldName + "'";
+        stmt.execute(str);
+    }
+
     private void insert(String nick, String login, String pass) throws SQLException {
         stmt.executeUpdate(
                 "INSERT INTO users (nick, login, pass) VALUES " +
