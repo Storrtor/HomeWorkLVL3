@@ -20,4 +20,6 @@ public interface AuthService {
      * получить ник
      */
     String getNickByLoginAndPass(String login, String pass) throws SQLException;
+
+    void updateNick(String newName, String oldName);
 }

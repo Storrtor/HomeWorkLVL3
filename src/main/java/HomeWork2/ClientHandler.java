@@ -86,6 +86,7 @@ public class ClientHandler {
                         String oldName = name;
                         name = splittedStr[1];
                         server.broadcastMessage(oldName + " сменил ник на " + name);
+                        server.getAuthService().updateNick(name, oldName);
                     } else {
                         sendMsg("Ник уже занят");
                     }

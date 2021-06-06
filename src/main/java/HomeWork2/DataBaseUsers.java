@@ -7,17 +7,17 @@ public class DataBaseUsers implements AuthService {
     private static Statement stmt;
 
 //main тоже не использую в чатике, но для управления бд он мне нужен
-//    public static void main(String[] args) {
-//        DataBaseUsers dataBaseUsers = new DataBaseUsers();
-//        try {
-//            dataBaseUsers.connect();
-//            dataBaseUsers.read();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            dataBaseUsers.disconnect();
-//        }
-//    }
+    public static void main(String[] args) {
+        DataBaseUsers dataBaseUsers = new DataBaseUsers();
+        try {
+            dataBaseUsers.connect();
+            dataBaseUsers.read();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            dataBaseUsers.disconnect();
+        }
+    }
 
     private void connect() throws SQLException {
         connection = DriverManager.getConnection(ChatConstants.DATABASE_URL);
@@ -56,17 +56,17 @@ public class DataBaseUsers implements AuthService {
 //        stmt.executeUpdate("DROP TABLE IF EXISTS users;");
 //    }
 //
-//    private void read() throws SQLException {
-//        try (ResultSet rs = stmt.executeQuery("SELECT * FROM users;")) {
-//            while (rs.next()) {
-//                System.out.println(rs.getInt(1) +
-//                        " " + rs.getString("nick") +
-//                        " " + rs.getString("login") +
-//                        " " + rs.getString("pass")
-//                );
-//            }
-//        }
-//    }
+    private void read() throws SQLException {
+        try (ResultSet rs = stmt.executeQuery("SELECT * FROM users;")) {
+            while (rs.next()) {
+                System.out.println(rs.getInt(1) +
+                        " " + rs.getString("nick") +
+                        " " + rs.getString("login") +
+                        " " + rs.getString("pass")
+                );
+            }
+        }
+    }
 //
 //    private void clearTable() throws SQLException {
 //        stmt.executeUpdate("DELETE FROM users;");
@@ -77,9 +77,13 @@ public class DataBaseUsers implements AuthService {
 //        stmt.executeUpdate("DELETE FROM users WHERE nick = '" + nick + "';");
 //    }
 
-    private void updateNick(String newName, String oldName) throws SQLException {
-        String str = "UPDATE users SET nick = '" + newName + "' WHERE name = '" + oldName + "'";
-        stmt.execute(str);
+    public void updateNick(String newName, String oldName){
+        String str = "UPDATE users SET nick = '" + newName + "' WHERE nick = '" + oldName + "'";
+        try {
+            stmt.execute(str);
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
     }
 
     private void insert(String nick, String login, String pass) throws SQLException {

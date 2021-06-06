@@ -46,4 +46,11 @@ public class BaseAuthService implements AuthService {
                 .map(entry -> entry.nick)
                 .findFirst().orElse(null);
     }
+
+    @Override
+    public void updateNick(String newName, String oldName) {
+
+    }
+
+
 }
