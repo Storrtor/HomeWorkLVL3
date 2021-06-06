@@ -76,12 +76,12 @@ public class DataBaseUsers implements AuthService {
 //    private void delete(String nick) throws SQLException {
 //        stmt.executeUpdate("DELETE FROM users WHERE nick = '" + nick + "';");
 //    }
-
-    private void insert(String nick, String login, String pass) throws SQLException {
-        stmt.executeUpdate(
-                "INSERT INTO users (nick, login, pass) VALUES " +
-                        "('" + nick + "', '" + login + "', '" + pass + "');");
-    }
+//
+//    private void insert(String nick, String login, String pass) throws SQLException {
+//        stmt.executeUpdate(
+//                "INSERT INTO users (nick, login, pass) VALUES " +
+//                        "('" + nick + "', '" + login + "', '" + pass + "');");
+//    }
 
     private String takeNick(String login, String pass) throws SQLException { //prepareted
         try (ResultSet rs = stmt.executeQuery("SELECT nick FROM users WHERE login = '" + login + "' AND pass = '" + pass + "'")) {
