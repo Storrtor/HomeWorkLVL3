@@ -56,3 +56,17 @@ nick4 вошел в чат
 /clients  nick4
 nick4 вошел в чат
 [nick4]: rtdfg]
+/clients  nick4
+nick4 вошел в чат
+[nick4]: gd
+[nick4]: dfg
+[nick4]: dfg
+[nick4]: d
+[nick4]: d
+[nick4]: d
+[nick4]: dg
+[nick4]: d
+[nick4]: yu
+[nick4]: gjh
+[nick4]: gjh
+[nick4]: gjh

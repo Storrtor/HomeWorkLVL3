@@ -105,6 +105,7 @@ public class ClientHandler {
                     closeConnectionForAllClients();
                 }
             };
+
             scheduledThreadPoolExecutor.schedule(task, ChatConstants.TIME_OUT, TimeUnit.MILLISECONDS);
 
             String message = inputStream.readUTF();
