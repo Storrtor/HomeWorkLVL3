@@ -42,7 +42,7 @@ public class ClientHandler {
                 public void run() {
                     try {
                         authentication();
-                        instructions();
+//                        instructions();
                         readMessages();
                         closeConnectionForAuthClients();
                     } catch (IOException | SQLException e) {
@@ -124,7 +124,7 @@ public class ClientHandler {
                 }
             });
             String message = inputStream.readUTF();
-            sendMsg("Для авторизации введите /auth ваш_логин ваш_пароль");
+//            sendMsg("Для авторизации введите /auth ваш_логин ваш_пароль");
             if (message.startsWith(ChatConstants.AUTH_COMMAND)) {
                 try {
                     String[] parts = message.split("\\s+");
