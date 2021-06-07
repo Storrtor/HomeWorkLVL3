@@ -23,5 +23,5 @@ public interface AuthService {
 
     void updateNick(String newName, String oldName);
 
-    boolean isNickBusy(String s);
+    boolean isNickBusy(String nick);
 }

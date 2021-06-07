@@ -83,7 +83,7 @@ public class ClientHandler {
                 } else if (messageFromClient.startsWith(ChatConstants.CHANGE_NICK)) {
                     String[] splittedStr = messageFromClient.split("\\s+");
                     // проверка на существование на сервере и в бд (раньше, если чувак офф, его ник можно себе сделать)
-                    if(!server.isNickBusy(splittedStr[1]) && server.getAuthService().isNickBusy(splittedStr[1])){
+                    if(!server.isNickBusy(splittedStr[1]) && !server.getAuthService().isNickBusy(splittedStr[1])){
                         String oldName = name;
                         name = splittedStr[1];
                         server.broadcastMessage(oldName + " сменил ник на " + name);

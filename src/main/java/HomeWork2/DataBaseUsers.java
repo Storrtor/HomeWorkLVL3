@@ -92,12 +92,12 @@ public class DataBaseUsers implements AuthService {
         try (ResultSet rs = stmt.executeQuery("SELECT nick FROM users WHERE nick = '" + nick + "'")){
             while (rs.next()){
                 System.out.println(rs.getString(1));
-                return false;
+                return true;
             }
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         }
-        return true;
+        return false;
     }
 
     private void insert(String nick, String login, String pass) throws SQLException {
