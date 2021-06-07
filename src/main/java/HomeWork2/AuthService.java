@@ -22,4 +22,6 @@ public interface AuthService {
     String getNickByLoginAndPass(String login, String pass) throws SQLException;
 
     void updateNick(String newName, String oldName);
+
+    boolean isNickBusy(String s);
 }

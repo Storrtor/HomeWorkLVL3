@@ -12,6 +12,7 @@ public class DataBaseUsers implements AuthService {
         try {
             dataBaseUsers.connect();
             dataBaseUsers.read();
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -42,20 +43,20 @@ public class DataBaseUsers implements AuthService {
     }
 
 // Никак не использую в чатике, но оставлю, пусть будет, для управления бд это мне нужно
-//    private void createTable() throws SQLException {
-//        stmt.executeUpdate(
-//                "CREATE TABLE IF NOT EXISTS users (\n" +
-//                        " id INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-//                        " nick TEXT, \n" +
-//                        " login TEXT, \n" +
-//                        " pass TEXT\n" +
-//                        ");");
-//    }
-//
-//    private void dropTable() throws SQLException {
-//        stmt.executeUpdate("DROP TABLE IF EXISTS users;");
-//    }
-//
+    private void createTable() throws SQLException {
+        stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS users (\n" +
+                        " id INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
+                        " nick TEXT, \n" +
+                        " login TEXT, \n" +
+                        " pass TEXT\n" +
+                        ");");
+    }
+
+    private void dropTable() throws SQLException {
+        stmt.executeUpdate("DROP TABLE IF EXISTS users;");
+    }
+
     private void read() throws SQLException {
         try (ResultSet rs = stmt.executeQuery("SELECT * FROM users;")) {
             while (rs.next()) {
@@ -84,6 +85,19 @@ public class DataBaseUsers implements AuthService {
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean isNickBusy(String nick) {
+        try (ResultSet rs = stmt.executeQuery("SELECT nick FROM users WHERE nick = '" + nick + "'")){
+            while (rs.next()){
+                System.out.println(rs.getString(1));
+                return false;
+            }
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+        return true;
     }
 
     private void insert(String nick, String login, String pass) throws SQLException {

@@ -47,9 +47,15 @@ public class BaseAuthService implements AuthService {
                 .findFirst().orElse(null);
     }
 
+
     @Override
     public void updateNick(String newName, String oldName) {
 
+    }
+
+    @Override
+    public boolean isNickBusy(String s) {
+        return false;
     }
 
 
