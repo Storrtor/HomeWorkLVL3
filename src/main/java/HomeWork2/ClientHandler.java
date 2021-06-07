@@ -168,7 +168,6 @@ public class ClientHandler {
             e.printStackTrace();
         }
         executorService.shutdown();
-
     }
 
     public void closeConnectionForAllClients() {
@@ -188,8 +187,6 @@ public class ClientHandler {
             e.printStackTrace();
         }
         executorService.shutdown();
-
-
     }
 
 
