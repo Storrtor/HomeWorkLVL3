@@ -42,6 +42,7 @@ public class ClientHandler {
                 public void run() {
                     try {
                         authentication();
+                        instructions();
                         readMessages();
                         closeConnectionForAuthClients();
                     } catch (IOException | SQLException e) {
@@ -56,6 +57,15 @@ public class ClientHandler {
             System.out.println("Problem with client creating");
         }
 
+    }
+
+    private void instructions() {
+        sendMsg("\nПривет привет.\nНиже перечислен список команд для использования:\n" +
+                "/upnick ник - для смены ника\n" +
+                "/w ник - для отправки личного сообщения\n" +
+                "/list (несколько ников) - для отправки одного сообщения нескольким пользователям\n" +
+                "/clients - список онлайн пользователей\n" +
+                "/end - для выхода из чата\n");
     }
 
     private void readMessages() throws IOException {
@@ -114,6 +124,7 @@ public class ClientHandler {
                 }
             });
             String message = inputStream.readUTF();
+            sendMsg("Для авторизации введите /auth ваш_логин ваш_пароль");
             if (message.startsWith(ChatConstants.AUTH_COMMAND)) {
                 try {
                     String[] parts = message.split("\\s+");
