@@ -21,10 +21,10 @@ public class ClientHandler {
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(2);
-    private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(2);
+    private ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     private String name;
+    private boolean isAuth = false;
 
     public String getName() {
         return name;
@@ -79,7 +79,7 @@ public class ClientHandler {
                     //2. Смена ника
                 } else if (messageFromClient.startsWith(ChatConstants.CHANGE_NICK)) {
                     String[] splittedStr = messageFromClient.split("\\s+");
-                    if(!server.isNickBusy(splittedStr[1])){
+                    if (!server.isNickBusy(splittedStr[1])) {
                         String oldName = name;
                         name = splittedStr[1];
                         server.broadcastMessage(oldName + " сменил ник на " + name);
@@ -96,18 +96,23 @@ public class ClientHandler {
         }
     }
 
+
     // /auth login pass
     public void authentication() throws IOException, SQLException {
-        while (true) {
-            Runnable task = new Runnable() {
-                @Override
-                public void run() {
+        long start = System.currentTimeMillis();
+        while (true && System.currentTimeMillis() - start < ChatConstants.TIME_OUT) {
+            executorService.execute(()->{
+                while (System.currentTimeMillis() - start < ChatConstants.TIME_OUT && !isAuth) {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (!isAuth) {
                     closeConnectionForAllClients();
                 }
-            };
-
-            scheduledThreadPoolExecutor.schedule(task, ChatConstants.TIME_OUT, TimeUnit.MILLISECONDS);
-
+            });
             String message = inputStream.readUTF();
             if (message.startsWith(ChatConstants.AUTH_COMMAND)) {
                 try {
@@ -120,14 +125,7 @@ public class ClientHandler {
                             name = nick;
                             server.subscribe(this);
                             server.broadcastMessage(name + " вошел в чат");
-                            //Метод remove почему-то не удаляет задачу
-//                            System.out.println(scheduledThreadPoolExecutor.remove(task)
-
-                            //Вроде как, если я правильно прочитала спецификацию оракла, я просто вырублю текущую задачу
-                            // и тем самым отключу таймер, если пользователь авторизуется
-                            //Я хотела отменить исполнение задачи, если время истекло, нашла только такой выход,
-                            // не уверена насколько корректно это работает с точки зрения переиспользования потоков
-                            scheduledThreadPoolExecutor.shutdownNow();
+                            isAuth = true;
                             return;
                         } else {
                             sendMsg("Ник уже используется");
@@ -141,8 +139,6 @@ public class ClientHandler {
             }
         }
     }
-
-
 
 
     public void sendMsg(String message) {
@@ -172,7 +168,7 @@ public class ClientHandler {
             e.printStackTrace();
         }
         executorService.shutdown();
-        scheduledThreadPoolExecutor.shutdown();
+
     }
 
     public void closeConnectionForAllClients() {
@@ -192,10 +188,9 @@ public class ClientHandler {
             e.printStackTrace();
         }
         executorService.shutdown();
-        scheduledThreadPoolExecutor.shutdown();
+
 
     }
-
 
 
 }

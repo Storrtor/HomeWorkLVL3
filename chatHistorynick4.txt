@@ -70,3 +70,166 @@ nick4 вошел в чат
 [nick4]: gjh
 [nick4]: gjh
 [nick4]: gjh
+/clients  nick4
+nick4 вошел в чат
+[nick4]: sdfsf
+[nick4]: sdfsfd
+[nick4]: sdfsfd
+[nick4]: weaed
+[nick4]: ыыпып
+[nick4]: кеце
+/clients  nick4
+nick4 вошел в чат
+Неверные логин/пароль
+Неверные логин/пароль
+/clients  nick4
+nick4 вошел в чат
+Неверные логин/пароль
+Неверные логин/пароль
+/clients  nick4
+nick4 вошел в чат
+/clients  nick4
+nick4 вошел в чат
+Неверные логин/пароль
+/clients  nick4
+nick4 вошел в чат
+Неверные логин/пароль
+/clients  nick4
+nick4 вошел в чат
+Неверные логин/пароль
+Неверные логин/пароль
+Неверные логин/пароль
+Неверные логин/пароль
+/clients  nick4
+nick4 вошел в чат
+Ник уже используется
+Неверные логин/пароль
+Неверные логин/пароль
+/clients  nick4
+nick4 вошел в чат
+[nick4]: adsdas
+[nick4]: nhjhf
+[nick4]: fgfh
+/clients  nick4
+nick4 вошел в чат
+Неверные логин/пароль
+Неверные логин/пароль
+Неверные логин/пароль
+Неверные логин/пароль
+Неверные логин/пароль
+/clients  nick4
+nick4 вошел в чат
+Неверные логин/пароль
+Неверные логин/пароль
+Неверные логин/пароль
+Неверные логин/пароль
+/clients  nick4
+nick4 вошел в чат
+Прикол
+Неверные логин/пароль
+Прикол
+Неверные логин/пароль
+/clients  nick4
+nick4 вошел в чат
+Ник уже используется
+Прикол
+Неверные логин/пароль
+Прикол
+Неверные логин/пароль
+/authok nick5
+/clients  nick5 nick5
+/clients  nick5 nick5
+nick5 вошел в чат
+nick5 вошел в чат
+Прикол
+Неверные логин/пароль
+Прикол
+Неверные логин/пароль
+/clients  nick4
+nick4 вошел в чат
+[nick4]: привет
+[nick4]: цукцук
+[nick4]: йцу
+[nick4]: ппев
+[nick4]: цуцыку
+/clients  nick4
+nick4 вошел в чат
+[nick4]: sdffsd
+[nick4]: sdfsfd
+[nick4]: sdffsd
+/clients  nick4
+nick4 вошел в чат
+[nick4]: dsfsfd
+/clients  nick4
+nick4 вошел в чат
+[nick4]: fwerfwer
+/clients  nick4
+nick4 вошел в чат
+[nick4]: ghbdtn
+[nick4]: привет
+[nick4]: привет
+[nick4]: привет
+[nick4]: привет
+[nick4]: привет
+[nick4]: привет
+[nick4]: привет
+[nick4]: привет
+[nick4]: привет
+[nick4]: ууеуееу
+[nick4]: привет
+/clients  nick4
+nick4 вошел в чат
+[nick4]: erwere
+/clients  nick4
+nick4 вошел в чат
+/clients  nick4
+nick4 вошел в чат
+[nick4]: fgdg
+/clients  nick4
+nick4 вошел в чат
+[nick4]: ghbdtn
+[nick4]: привет
+[nick4]: выааыв
+[nick4]: ываывааыв
+[nick4]: ываыавыва
+[nick4]: ываыав
+[nick4]: ываыаваыв
+[nick4]: ываываавы
+[nick4]: ываыавыав
+[nick4]: ываыавыав
+[nick4]: ываываыав
+[nick4]: ываываыав
+[nick4]: ывааывыав
+[nick4]: енгенг
+[nick4]: енгеегн
+/clients  nick4
+nick4 вошел в чат
+[nick4]: adsdas
+[nick4]: sdffsd
+[nick4]: вапвапп
+[nick4]: вапап
+[nick4]: авпвп
+[nick4]: прппр
+[nick4]: ноорп
+/clients  nick4
+nick4 вошел в чат
+[nick4]: fdsff
+[nick4]: sdfsfd
+[nick4]: перезагрузить ленту
+[nick4]: вапвп
+/clients  nick4
+nick4 вошел в чат
+[nick4]: sdfsfd
+[nick4]: sdffsd
+[nick4]: dfgd
+[nick4]: jhghh
+/clients  nick4
+nick4 вошел в чат
+[nick4]: sfsfd
+[nick4]: asdas
+[nick4]: sdffs
+/clients  nick4
+nick4 вошел в чат
+[nick4]: sdfsfd
+[nick4]: sdfdsf
+[nick4]: sdffsd
