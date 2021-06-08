@@ -6,6 +6,8 @@ import java.util.Iterator;
 
 public class Box <T extends Fruit>{
 
+    private static final float EPSILON = 0.00001f;
+
     private final ArrayList<T> someFruits = new ArrayList<>();
 
     public void add(T... fruit){
@@ -41,7 +43,7 @@ public class Box <T extends Fruit>{
      * @return true - если вес равен, false - если же нет
      */
     public boolean compare(Box<?> box){
-        if(this.getWeight() == box.getWeight()){
+        if(this.getWeight() - box.getWeight() < EPSILON){
             return true;
         }
         return false;
