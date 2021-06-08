@@ -2,21 +2,22 @@ package HomeWork2;
 
 import java.sql.*;
 
-public class DataBaseUsers implements AuthService {
+public class DataBaseAuthService implements AuthService {
     private static Connection connection;
     private static Statement stmt;
+    private static PreparedStatement preparedStatement;
 
 //main тоже не использую в чатике, но для управления бд он мне нужен
     public static void main(String[] args) {
-        DataBaseUsers dataBaseUsers = new DataBaseUsers();
+        DataBaseAuthService dataBaseAuthService = new DataBaseAuthService();
         try {
-            dataBaseUsers.connect();
-            dataBaseUsers.read();
+            dataBaseAuthService.connect();
+            dataBaseAuthService.read();
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            dataBaseUsers.disconnect();
+            dataBaseAuthService.disconnect();
         }
     }
 
@@ -44,17 +45,18 @@ public class DataBaseUsers implements AuthService {
 
 // Никак не использую в чатике, но оставлю, пусть будет, для управления бд это мне нужно
     private void createTable() throws SQLException {
-        stmt.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS users (\n" +
-                        " id INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-                        " nick TEXT, \n" +
-                        " login TEXT, \n" +
-                        " pass TEXT\n" +
-                        ");");
+        String createTable = "" +
+                "CREATE TABLE IF NOT EXISTS users " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "nick VARCHAR(15), " +
+                "login VARCHAR(15), " +
+                "pass VARCHAR(20)";
+        stmt.execute(createTable);
     }
 
     private void dropTable() throws SQLException {
-        stmt.executeUpdate("DROP TABLE IF EXISTS users;");
+        String dropTable = "DROP TABLE IF EXISTS users";
+        stmt.execute(dropTable);
     }
 
     private void read() throws SQLException {
@@ -68,23 +70,26 @@ public class DataBaseUsers implements AuthService {
             }
         }
     }
-//
-//    private void clearTable() throws SQLException {
-//        stmt.executeUpdate("DELETE FROM users;");
-//    }
-//
-//
-//    private void delete(String nick) throws SQLException {
-//        stmt.executeUpdate("DELETE FROM users WHERE nick = '" + nick + "';");
-//    }
+
+    private void clearTable() throws SQLException {
+        String clearTable = "DELETE FROM users";
+        stmt.execute(clearTable);
+    }
+
+
+    private void delete(String nick) throws SQLException {
+        String delete = "DELETE FROM users WHERE nick = '" + nick + "'";
+        stmt.execute(delete);
+    }
 
     public void updateNick(String newName, String oldName){
-        String str = "UPDATE users SET nick = '" + newName + "' WHERE nick = '" + oldName + "'";
+        String updateNick = "UPDATE users SET nick = '" + newName + "' WHERE nick = '" + oldName + "'";
         try {
-            stmt.execute(str);
+            preparedStatement = connection.prepareStatement(updateNick);
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         }
+
     }
 
     @Override
@@ -101,14 +106,15 @@ public class DataBaseUsers implements AuthService {
     }
 
     private void insert(String nick, String login, String pass) throws SQLException {
-        stmt.executeUpdate(
-                "INSERT INTO users (nick, login, pass) VALUES " +
-                        "('" + nick + "', '" + login + "', '" + pass + "');");
+        String insert = "INSERT INTO users (nick, login, pass) VALUES " +
+                "('" + nick + "', '" + login + "', '" + pass + "'";
+        preparedStatement  = connection.prepareStatement(insert);
     }
 
     private String takeNick(String login, String pass) throws SQLException { //prepareted
-        try (ResultSet rs = stmt.executeQuery("SELECT nick FROM users WHERE login = '" + login + "' AND pass = '" + pass + "'")) {
-            return rs.getString(1);
+        String takeNick = "SELECT nick FROM users WHERE login = '" + login + "' AND pass = '" + pass + "'";
+        try (PreparedStatement pr = connection.prepareStatement(takeNick)) {
+            return pr.setString(1, "nick");
         }
     }
 

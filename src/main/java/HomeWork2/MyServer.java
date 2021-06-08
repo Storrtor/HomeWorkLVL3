@@ -18,7 +18,7 @@ public class MyServer {
 
     public MyServer() {
         try (ServerSocket server = new ServerSocket(ChatConstants.PORT)) {
-            authService = new DataBaseUsers();
+            authService = new DataBaseAuthService();
             authService.start();
             clients = new ArrayList<>();
             while (true) {
