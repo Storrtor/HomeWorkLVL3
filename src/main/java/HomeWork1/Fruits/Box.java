@@ -3,12 +3,13 @@ package HomeWork1.Fruits;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 public class Box <T extends Fruit>{
 
     private static final float EPSILON = 0.00001f;
 
-    private final ArrayList<T> someFruits = new ArrayList<>();
+    private final List<T> someFruits = new ArrayList<>();
 
     public void add(T... fruit){
         someFruits.addAll(Arrays.asList(fruit));
