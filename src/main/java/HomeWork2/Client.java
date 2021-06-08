@@ -176,58 +176,31 @@ public class Client extends JFrame {
      */
     public void makeHistory(File file, String str) {
         System.out.println("Пишем в файл");
-        try (
-                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, true))
-        ) {
-            bufferedWriter.write(str + "\n");
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(file, true))) {
+            dataOutputStream.writeUTF(str);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Привет Жень.
-     *
-     * Осознаю, что изобрела велосипед, но, честно, вот вообще не поняла как посчитать строчки,
-     * если классы постоянно везде считают байты и предлагают переставлять курсор с помощью RandomAccessFile методов seek и getFilePointer
-     * тоже на основе байтов (если я правильно поняла этот класс и его методы).
-     *
-     * Поэтому загрузка истории вот такая волшебная. Надеюсь на твою помощь, ибо понимаю, что то, что я сделала очень страшно,
-     * но хоть работает)
-     */
-    public void loadHistory(String nick) {
+    public void loadHistory(String nick) throws IOException {
+        List<String> lastMessage = new ArrayList<>();
         try (
-                FileReader fileReader = new FileReader("chatHistory" + nick + ".txt");
-                BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-                FileReader fileReader2 = new FileReader("chatHistory" + nick + ".txt");
-                BufferedReader bufferedReader2 = new BufferedReader(fileReader2);
-        ) {
-            //Считывает построчно и считает кол-во строчек
-            int count = 0;
-            String str = bufferedReader.readLine();
-            while (str != null){
-                str = bufferedReader.readLine();
-                count++;
+                DataInputStream dataInputStream = new DataInputStream(new FileInputStream("chatHistory" + nick + ".txt"))) {
+            while (dataInputStream.available() != 0) {
+                lastMessage.add(dataInputStream.readUTF());
             }
-            //Считывает с нужной строчки
-            int count2 = 0;
-            int startNubmer = count - ChatConstants.CHAT_HISTORY;
-            String str2 = bufferedReader2.readLine();
-            while (str2 != null) {
-                if(count2 >= startNubmer){
-                    str2 = bufferedReader2.readLine();
-                    if(str2 != null) {
-                        chatArea.append(str2 + "\n");
-                    }
-                } else {
-                    str2 = bufferedReader2.readLine();
-                }
-                count2++;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (lastMessage.size() > ChatConstants.CHAT_HISTORY) {
+            for (int i = lastMessage.size() - ChatConstants.CHAT_HISTORY; i < lastMessage.size(); i++) {
+                chatArea.append(lastMessage.get(i) + "\n");
             }
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } else {
+            for (int i = 0; i < lastMessage.size(); i++) {
+                chatArea.append(lastMessage.get(i) + "\n");
+            }
         }
     }
 
