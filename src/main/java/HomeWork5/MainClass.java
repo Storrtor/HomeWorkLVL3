@@ -1,9 +1,12 @@
 package HomeWork5;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class MainClass {
     public static final int CARS_COUNT = 4;
+    static Lock lock = new ReentrantLock();
 
     public static void main(String[] args) {
         System.out.println("Важное объявление >>> Подготовка!!!");
@@ -12,6 +15,8 @@ public class MainClass {
         for (int i = 0; i < cars.length; i++) {
             cars[i] = new Car(race, 20 + (int) (Math.random() * 10));
         }
+        lock.lock();
+
         for (int i = 0; i < cars.length; i++) {
             new Thread(cars[i]).start();
         }
