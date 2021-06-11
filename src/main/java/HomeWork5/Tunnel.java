@@ -4,7 +4,7 @@ import java.util.concurrent.Semaphore;
 
 public class Tunnel extends Stage{
 
-    Semaphore semaphore = new Semaphore(Car.getCarsCount() / 2);
+    private static Semaphore semaphore = new Semaphore(Car.getCarsCount() / 2);
 
     public Tunnel() {
         this.length = 80;
@@ -22,8 +22,8 @@ public class Tunnel extends Stage{
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             } finally {
-                semaphore.release(); //освобождаем палочку
                 System.out.println(car.getName() + " закончил этап: " + description);
+                semaphore.release(); //освобождаем палочку
             }
         } catch (Exception ex) {
             ex.printStackTrace();
