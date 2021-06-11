@@ -3,16 +3,19 @@ package HomeWork2;
 import java.sql.*;
 
 public class DataBaseAuthService implements AuthService {
+
     private static Connection connection;
     private static Statement stmt;
     private static PreparedStatement preparedStatement;
 
-//main тоже не использую в чатике, но для управления бд он мне нужен
+    //main тоже не использую в чатике, но для управления бд он мне нужен
     public static void main(String[] args) {
         DataBaseAuthService dataBaseAuthService = new DataBaseAuthService();
         try {
             dataBaseAuthService.connect();
+
             dataBaseAuthService.read();
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -43,7 +46,7 @@ public class DataBaseAuthService implements AuthService {
         }
     }
 
-// Никак не использую в чатике, но оставлю, пусть будет, для управления бд это мне нужно
+    // Никак не использую в чатике, но оставлю, пусть будет, для управления бд это мне нужно
     private void createTable() throws SQLException {
         String createTable = "" +
                 "CREATE TABLE IF NOT EXISTS users " +
@@ -76,26 +79,47 @@ public class DataBaseAuthService implements AuthService {
         stmt.execute(clearTable);
     }
 
-
-    private void delete(String nick) throws SQLException {
-        String delete = "DELETE FROM users WHERE nick = '" + nick + "'";
-        stmt.execute(delete);
+    private void insert(String nick, String login, String pass) throws SQLException {
+        String insert = "INSERT INTO users (nick, login, pass) VALUES (?, ?, ?)";
+        preparedStatement = connection.prepareStatement(insert);
+        preparedStatement.setString(1, nick);
+        preparedStatement.setString(2, login);
+        preparedStatement.setString(3, pass);
+        preparedStatement.execute();
     }
 
-    public void updateNick(String newName, String oldName){
-        String updateNick = "UPDATE users SET nick = '" + newName + "' WHERE nick = '" + oldName + "'";
+
+    private void delete(String nick) throws SQLException {
+        String delete = "DELETE FROM users WHERE nick = ?";
+        preparedStatement = connection.prepareStatement(delete);
+        preparedStatement.setString(1, nick);
+        preparedStatement.execute();
+
+    }
+
+    public void updateNick(String newName, String oldName) {
+        String updateNick = "UPDATE users SET nick = ? WHERE nick = ?";
         try {
             preparedStatement = connection.prepareStatement(updateNick);
+            preparedStatement.setString(1, newName);
+            preparedStatement.setString(1, oldName);
+            preparedStatement.execute();
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         }
-
     }
 
     @Override
-    public boolean isNickBusy(String nick) {
-        try (ResultSet rs = stmt.executeQuery("SELECT nick FROM users WHERE nick = '" + nick + "'")){
-            while (rs.next()){
+    public boolean isNickBusy(String nick) { //надо проверять!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        String isNickBusy = "SELECT nick FROM users WHERE nick = ?";
+        try {
+            preparedStatement = connection.prepareStatement(isNickBusy);
+            preparedStatement.setString(1, nick);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try (ResultSet rs = preparedStatement.executeQuery()) {
+            while (rs.next()) {
                 System.out.println(rs.getString(1));
                 return true;
             }
@@ -105,16 +129,14 @@ public class DataBaseAuthService implements AuthService {
         return false;
     }
 
-    private void insert(String nick, String login, String pass) throws SQLException {
-        String insert = "INSERT INTO users (nick, login, pass) VALUES " +
-                "('" + nick + "', '" + login + "', '" + pass + "'";
-        preparedStatement  = connection.prepareStatement(insert);
-    }
 
-    private String takeNick(String login, String pass) throws SQLException { //prepareted
-        String takeNick = "SELECT nick FROM users WHERE login = '" + login + "' AND pass = '" + pass + "'";
-        try (PreparedStatement pr = connection.prepareStatement(takeNick)) {
-            return pr.setString(1, "nick");
+    private String takeNick(String login, String pass) throws SQLException {
+        String takeNick = "SELECT nick FROM users WHERE login = ? AND pass = ?";
+        preparedStatement = connection.prepareStatement(takeNick);
+        preparedStatement.setString(1, login);
+        preparedStatement.setString(2, pass);
+        try (ResultSet rs = preparedStatement.executeQuery()) {
+            return rs.getString("nick");
         }
     }
 
