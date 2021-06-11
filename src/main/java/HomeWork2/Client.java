@@ -1,15 +1,16 @@
 package HomeWork2;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Client extends JFrame {
 
@@ -21,6 +22,8 @@ public class Client extends JFrame {
 
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
+
+    private File file;
 
     public Client() {
         try {
@@ -39,9 +42,14 @@ public class Client extends JFrame {
 
         //Message area
         chatArea = new JTextArea();
+        DefaultCaret caret = (DefaultCaret) chatArea.getCaret();         //авто скрол
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);              //авто скрол
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
+
+
         add(new JScrollPane(chatArea), BorderLayout.CENTER);
+
 
         //down pannel
         JPanel panel = new JPanel(new BorderLayout());
@@ -52,8 +60,14 @@ public class Client extends JFrame {
         panel.add(inputField, BorderLayout.CENTER);
         add(panel, BorderLayout.SOUTH);
 
-        sendButton.addActionListener(e -> sendMessage());
-        inputField.addActionListener(e -> sendMessage());
+        sendButton.addActionListener(e -> {
+
+            sendMessage();
+        });
+        inputField.addActionListener(e -> {
+            sendMessage();
+        });
+
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -61,10 +75,11 @@ public class Client extends JFrame {
                 super.windowClosing(e);
                 try {
                     outputStream.writeUTF(ChatConstants.STOP_WORD);
-//                    closeConnection();
+                    closeConnection();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+
             }
         });
 
@@ -82,7 +97,12 @@ public class Client extends JFrame {
                     //авторизация
                     while (true) {
                         String strFromServer = inputStream.readUTF();
-                        if (strFromServer.equals(ChatConstants.AUTH_OK)) {
+                        if (strFromServer.startsWith(ChatConstants.AUTH_OK)) {
+                            String[] parts = strFromServer.split("\\s+");
+                            String nick = parts[1];
+                            //Создание файла, загрузка истории
+                            makeFile(nick);
+                            loadHistory(nick);
                             break;
                         }
                         chatArea.append(strFromServer);
@@ -90,7 +110,12 @@ public class Client extends JFrame {
                     }
                     //чтение
                     while (true) {
+                        //Загрузка сообщений
                         String strFromServer = inputStream.readUTF();
+                        //сохранение истории
+                        if (file != null) {
+                            makeHistory(file, strFromServer);
+                        }
                         if (strFromServer.equals(ChatConstants.STOP_WORD)) {
                             break;
                         } else if (strFromServer.startsWith(ChatConstants.CLIENTS_LIST)) {
@@ -139,6 +164,45 @@ public class Client extends JFrame {
         }
     }
 
+    public File makeFile(String nick) {
+        System.out.println("Создаем файл");
+        file = new File("chatHistory" + nick + ".txt");
+        return file;
+    }
+
+
+    /**
+     * Создание истории
+     */
+    public void makeHistory(File file, String str) {
+        System.out.println("Пишем в файл");
+        try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(file, true))) {
+            dataOutputStream.writeUTF(str);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadHistory(String nick) throws IOException {
+        List<String> lastMessage = new ArrayList<>();
+        try (
+                DataInputStream dataInputStream = new DataInputStream(new FileInputStream("chatHistory" + nick + ".txt"))) {
+            while (dataInputStream.available() != 0) {
+                lastMessage.add(dataInputStream.readUTF());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (lastMessage.size() > ChatConstants.CHAT_HISTORY) {
+            for (int i = lastMessage.size() - ChatConstants.CHAT_HISTORY; i < lastMessage.size(); i++) {
+                chatArea.append(lastMessage.get(i) + "\n");
+            }
+        } else {
+            for (int i = 0; i < lastMessage.size(); i++) {
+                chatArea.append(lastMessage.get(i) + "\n");
+            }
+        }
+    }
 
     public static void main(String[] args) {
         try {
@@ -149,4 +213,5 @@ public class Client extends JFrame {
             e.printStackTrace();
         }
     }
+
 }

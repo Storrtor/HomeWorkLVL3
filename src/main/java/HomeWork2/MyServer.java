@@ -16,6 +16,10 @@ public class MyServer {
     private List<ClientHandler> clients;
     private AuthService authService;
 
+    public List<ClientHandler> getClients() {
+        return clients;
+    }
+
     public MyServer() {
         try (ServerSocket server = new ServerSocket(ChatConstants.PORT)) {
             authService = new DataBaseAuthService();

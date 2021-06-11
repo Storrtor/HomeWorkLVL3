@@ -23,4 +23,7 @@ public class ChatConstants {
     public static final int TIME_OUT = 120_000;
 
     public static final String DATABASE_URL = "jdbc:sqlite:javadb.db";
+
+    public static final int CHAT_HISTORY = 100;
+
 }

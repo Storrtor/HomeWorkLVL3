@@ -1,5 +1,6 @@
 package HomeWork2;
 
+import java.awt.event.WindowAdapter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -73,8 +74,7 @@ public class ClientHandler {
                     }
                 } else if (messageFromClient.startsWith(ChatConstants.CLIENTS_LIST)) {
                     server.broadcastClients();
-
-                    //2. Смена ника
+                //2. Смена ника
                 } else if (messageFromClient.startsWith(ChatConstants.CHANGE_NICK)) {
                     String[] splittedStr = messageFromClient.split("\\s+");
                     // проверка на существование на сервере и в бд (раньше, если чувак офф, его ник можно себе сделать)
@@ -135,6 +135,8 @@ public class ClientHandler {
     }
 
 
+
+
     public void sendMsg(String message) {
         try {
             outputStream.writeUTF(message); //отправка сообщения от сервера клиенту
@@ -180,6 +182,7 @@ public class ClientHandler {
             e.printStackTrace();
         }
     }
+
 
 
 }
