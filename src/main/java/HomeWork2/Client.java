@@ -99,10 +99,10 @@ public class Client extends JFrame {
                         String strFromServer = inputStream.readUTF();
                         if (strFromServer.startsWith(ChatConstants.AUTH_OK)) {
                             String[] parts = strFromServer.split("\\s+");
-                            String nick = parts[1];
+                            String login = parts[2];
                             //Создание файла, загрузка истории
-                            makeFile(nick);
-                            loadHistory(nick);
+                            makeFile(login);
+                            loadHistory(login);
                             break;
                         }
                         chatArea.append(strFromServer);
@@ -164,9 +164,10 @@ public class Client extends JFrame {
         }
     }
 
-    public File makeFile(String nick) {
+    public File makeFile(String login) {
+
         System.out.println("Создаем файл");
-        file = new File("chatHistory" + nick + ".txt");
+        file = new File("chatHistory" + login + ".txt");
         return file;
     }
 
@@ -183,10 +184,10 @@ public class Client extends JFrame {
         }
     }
 
-    public void loadHistory(String nick) throws IOException {
+    public void loadHistory(String login) throws IOException {
         List<String> lastMessage = new ArrayList<>();
         try (
-                DataInputStream dataInputStream = new DataInputStream(new FileInputStream("chatHistory" + nick + ".txt"))) {
+                DataInputStream dataInputStream = new DataInputStream(new FileInputStream("chatHistory" + login + ".txt"))) {
             while (dataInputStream.available() != 0) {
                 lastMessage.add(dataInputStream.readUTF());
             }

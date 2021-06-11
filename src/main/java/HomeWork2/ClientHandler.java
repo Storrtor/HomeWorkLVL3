@@ -115,7 +115,8 @@ public class ClientHandler {
                     if (nick != null) {
                         //проверим что пользователя с таким ником нет
                         if (!server.isNickBusy(nick)) {
-                            sendMsg(ChatConstants.AUTH_OK + " " + nick);
+                            String login = parts[1];
+                            sendMsg(ChatConstants.AUTH_OK + " " + nick + " " + login);
                             name = nick;
                             server.subscribe(this);
                             server.broadcastMessage(name + " вошел в чат");
