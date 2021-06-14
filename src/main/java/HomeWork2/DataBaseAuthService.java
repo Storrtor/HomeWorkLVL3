@@ -160,8 +160,13 @@ public class DataBaseAuthService implements AuthService {
     }
 
     @Override
-    public String getNickByLoginAndPass(String login, String pass) throws SQLException {
-        return takeNick(login, pass);
+    public String getNickByLoginAndPass(String login, String pass)  {
+        try {
+            return takeNick(login, pass);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return null;
     }
 
 }

@@ -1,0 +1,9 @@
+INFO  2021-06-14 17:39:49 [main] HomeWork2.MyServer (MyServer.java:33) - Server started
+INFO  2021-06-14 17:39:49 [main] HomeWork2.MyServer (MyServer.java:36) - Server is waiting for connection 
+INFO  2021-06-14 17:39:54 [main] HomeWork2.MyServer (MyServer.java:38) - Client connected
+INFO  2021-06-14 17:39:54 [main] HomeWork2.MyServer (MyServer.java:36) - Server is waiting for connection 
+INFO  2021-06-14 17:45:26 [main] HomeWork2.MyServer (MyServer.java:33) - Server started
+INFO  2021-06-14 17:45:26 [main] HomeWork2.MyServer (MyServer.java:36) - Server is waiting for connection 
+INFO  2021-06-14 17:45:28 [main] HomeWork2.MyServer (MyServer.java:38) - Client connected
+INFO  2021-06-14 17:45:28 [main] HomeWork2.MyServer (MyServer.java:36) - Server is waiting for connection 
+INFO  2021-06-14 17:45:43 [Thread-0] HomeWork2.ClientHandler$1 (ClientHandler.java:53) - Закрываем соединение
