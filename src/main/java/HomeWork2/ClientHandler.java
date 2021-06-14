@@ -126,7 +126,7 @@ public class ClientHandler {
                             sendMsg("Ник уже используется");
                         }
                     }
-                } catch (ArrayIndexOutOfBoundsException | SQLException ex) {
+                } catch (ArrayIndexOutOfBoundsException ex) {
                     sendMsg("Неверные логин/пароль");
                 }
             } else {
