@@ -9,7 +9,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Client extends JFrame {
@@ -185,23 +185,20 @@ public class Client extends JFrame {
     }
 
     public void loadHistory(String login) throws IOException {
-        List<String> lastMessage = new ArrayList<>();
+        List<String> list = new ArrayList<>();
         try (
                 DataInputStream dataInputStream = new DataInputStream(new FileInputStream("chatHistory" + login + ".txt"))) {
             while (dataInputStream.available() != 0) {
-                lastMessage.add(dataInputStream.readUTF());
+                list.add(dataInputStream.readUTF());
+                if(list.size() > ChatConstants.CHAT_HISTORY){
+                    list.remove(0);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (lastMessage.size() > ChatConstants.CHAT_HISTORY) {
-            for (int i = lastMessage.size() - ChatConstants.CHAT_HISTORY; i < lastMessage.size(); i++) {
-                chatArea.append(lastMessage.get(i) + "\n");
-            }
-        } else {
-            for (int i = 0; i < lastMessage.size(); i++) {
-                chatArea.append(lastMessage.get(i) + "\n");
-            }
+        for (String s : list) {
+            chatArea.append(s + "\n");
         }
     }
 
