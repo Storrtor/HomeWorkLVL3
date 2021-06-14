@@ -1,5 +1,8 @@
 package HomeWork2;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.awt.event.WindowAdapter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -16,6 +19,8 @@ import java.util.TimerTask;
  * Обслуживает клиента (отвечает за связь между клиентом и сервером)
  */
 public class ClientHandler {
+
+    private static final Logger LOGGER = LogManager.getLogger(ClientHandler.class);
 
     private MyServer server;
     private Socket socket;
@@ -45,21 +50,21 @@ public class ClientHandler {
                     } catch (IOException | SQLException e) {
                         e.printStackTrace();
                     } finally {
-                        System.out.println("Закрываем соединение");
+                        LOGGER.info("Закрываем соединение");
                         closeConnectionForAllClients();
                     }
                 }
             }).start();
         } catch (IOException ex) {
-            System.out.println("Problem with client creating");
+            LOGGER.warn("Проблема c созданием клиента");
         }
-
     }
 
     private void readMessages() throws IOException {
         while (true) {
             try {
                 String messageFromClient = inputStream.readUTF();
+                LOGGER.trace("{}" + name + "{}" + messageFromClient, "from ", ": ");
                 System.out.println("from " + name + ": " + messageFromClient); //отправка только в консоль, никуда больше
                 if (messageFromClient.equals(ChatConstants.STOP_WORD)) {
                     return;
@@ -134,9 +139,6 @@ public class ClientHandler {
             }
         }
     }
-
-
-
 
     public void sendMsg(String message) {
         try {

@@ -1,5 +1,9 @@
 package HomeWork2;
 
+import HomeWork6.MainApp;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,6 +17,8 @@ import java.util.stream.Collectors;
  */
 public class MyServer {
 
+    private static final Logger LOGGER = LogManager.getLogger(MyServer.class);
+
     private List<ClientHandler> clients;
     private AuthService authService;
 
@@ -24,11 +30,12 @@ public class MyServer {
         try (ServerSocket server = new ServerSocket(ChatConstants.PORT)) {
             authService = new DataBaseAuthService();
             authService.start();
+            LOGGER.info("Server started");
             clients = new ArrayList<>();
             while (true) {
-                System.out.println("Server is waiting for connection");
+                LOGGER.info("Server is waiting for connection ");
                 Socket socket = server.accept(); //получение клиента (ожидаем подключение клиента)
-                System.out.println("Client connected");
+                LOGGER.info("Client connected");
                 new ClientHandler(this, socket);
             }
         } catch (IOException e) {
@@ -36,6 +43,7 @@ public class MyServer {
         } finally {
             if (authService != null) {
                 authService.stop();
+                LOGGER.info("Server stopped");
             }
         }
     }
