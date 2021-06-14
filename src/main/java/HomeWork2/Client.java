@@ -214,5 +214,4 @@ public class Client extends JFrame {
             e.printStackTrace();
         }
     }
-
 }

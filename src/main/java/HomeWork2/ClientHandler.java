@@ -3,14 +3,19 @@ package HomeWork2;
 import java.awt.event.WindowAdapter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Обслуживает клиента (отвечает за связь между клиентом и сервером)
@@ -22,7 +27,10 @@ public class ClientHandler {
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
 
+    private ExecutorService executorService = Executors.newCachedThreadPool();
+
     private String name;
+    private boolean isAuth = false;
 
     public String getName() {
         return name;
@@ -35,11 +43,12 @@ public class ClientHandler {
             this.inputStream = new DataInputStream(socket.getInputStream());
             this.outputStream = new DataOutputStream(socket.getOutputStream());
             this.name = "";
-            new Thread(new Runnable() {
+            executorService.execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         authentication();
+//                        instructions();
                         readMessages();
                         closeConnectionForAuthClients();
                     } catch (IOException | SQLException e) {
@@ -49,11 +58,20 @@ public class ClientHandler {
                         closeConnectionForAllClients();
                     }
                 }
-            }).start();
+            });
         } catch (IOException ex) {
             System.out.println("Problem with client creating");
         }
 
+    }
+
+    private void instructions() {
+        sendMsg("\nПривет привет.\nНиже перечислен список команд для использования:\n" +
+                "/upnick ник - для смены ника\n" +
+                "/w ник - для отправки личного сообщения\n" +
+                "/list (несколько ников) - для отправки одного сообщения нескольким пользователям\n" +
+                "/clients - список онлайн пользователей\n" +
+                "/end - для выхода из чата\n");
     }
 
     private void readMessages() throws IOException {
@@ -98,16 +116,22 @@ public class ClientHandler {
 
     // /auth login pass
     public void authentication() throws IOException, SQLException {
-        while (true) {
-            Timer timer = new Timer();
-            TimerTask StopApp = new TimerTask() {
-                @Override
-                public void run() {
+        long start = System.currentTimeMillis();
+        while (true && System.currentTimeMillis() - start < ChatConstants.TIME_OUT) {
+            executorService.execute(()->{
+                while (System.currentTimeMillis() - start < ChatConstants.TIME_OUT && !isAuth) {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (!isAuth) {
                     closeConnectionForAllClients();
                 }
-            };
-            timer.schedule(StopApp, ChatConstants.TIME_OUT);
+            });
             String message = inputStream.readUTF();
+//            sendMsg("Для авторизации введите /auth ваш_логин ваш_пароль");
             if (message.startsWith(ChatConstants.AUTH_COMMAND)) {
                 try {
                     String[] parts = message.split("\\s+");
@@ -120,7 +144,7 @@ public class ClientHandler {
                             name = nick;
                             server.subscribe(this);
                             server.broadcastMessage(name + " вошел в чат");
-                            timer.cancel();
+                            isAuth = true;
                             return;
                         } else {
                             sendMsg("Ник уже используется");
@@ -164,6 +188,7 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        executorService.shutdown();
     }
 
     public void closeConnectionForAllClients() {
@@ -182,6 +207,7 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        executorService.shutdown();
     }
 
 

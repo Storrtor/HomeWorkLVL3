@@ -1,5 +1,6 @@
-/clients  nick5
+/clients  nick4 nick5
 nick5 вошел в чат
-[nick5]: fdg
-[nick5]: dfgd
-[nick5]: fhf
+[nick5]: sdffds
+[nick5]: sdfsdf
+[nick5]: sdfsd
+[nick4]: gfhfh
