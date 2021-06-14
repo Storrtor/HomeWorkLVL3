@@ -21,7 +21,7 @@ public class ClientHandler {
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private ExecutorService executorService = Executors.newCachedThreadPool();
 
     private String name;
     private boolean isAuth = false;
