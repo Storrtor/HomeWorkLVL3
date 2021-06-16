@@ -17,6 +17,9 @@ public class MainApp {
         System.out.println(mainApp.checkOneFour(new int[]{1, 4, 4, 1, 1, 4, 3}));
 
     }
+    /**
+     *
+     */
 
     /**
      * №2. Метод, получающий не пустой одномерный целочисленный массив.
