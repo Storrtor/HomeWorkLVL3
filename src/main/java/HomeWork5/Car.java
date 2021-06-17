@@ -1,6 +1,8 @@
 package HomeWork5;
 
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -13,6 +15,8 @@ public class Car implements Runnable {
     private final CountDownLatch latch;
 
     private static Lock lock = new ReentrantLock();
+
+    private static CyclicBarrier cyclicBarrier = new CyclicBarrier(CARS_COUNT);
 
     private static boolean isPrinted = false;
 
@@ -48,6 +52,7 @@ public class Car implements Runnable {
         try {
             System.out.println(this.name + " готовится");
             Thread.sleep(500 + (int) (Math.random() * 800));
+            cyclicBarrier.await();
             System.out.println(this.name + " готов");
             latch.countDown();
         } catch (Exception e) {
@@ -69,7 +74,6 @@ public class Car implements Runnable {
         } finally {
             lock.unlock();
         }
-
 
 
         for (int i = 0; i < race.getStages().size(); i++) {

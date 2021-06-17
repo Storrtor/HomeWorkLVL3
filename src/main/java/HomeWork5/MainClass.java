@@ -21,8 +21,8 @@ public class MainClass {
             new Thread(cars[i]).start();
         }
 
-        while (Thread.activeCount() > 2) {
-        }
+        latch.countDown();
+        latch.await();
         System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
 
 
