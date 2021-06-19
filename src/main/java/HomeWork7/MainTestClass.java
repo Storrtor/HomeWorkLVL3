@@ -7,37 +7,37 @@ public class MainTestClass {
     int Bflag = 0;
     int Aflag = 0;
 
-    public static void start(Class obj) throws Exception {
-        MainTestClass tc = new MainTestClass();
+    public static void start(Class clazz) throws Exception {
+        MainTestClass mainTestClass = new MainTestClass();
 
-        Method[] methods = obj.getDeclaredMethods();
-        ArrayList<Method> arr = new ArrayList<>();
+        Method[] methods = clazz.getDeclaredMethods();
+        ArrayList<Method> methodList = new ArrayList<>();
         for (Method m : methods) {
             if (m.isAnnotationPresent(BeforeSuite.class)) {
-                tc.Bflag++;
+                mainTestClass.Bflag++;
             }
             if (m.isAnnotationPresent(AfterSuite.class)) {
-                tc.Aflag++;
+                mainTestClass.Aflag++;
             }
         }
-        if ((tc.Aflag | tc.Bflag) > 1) throw new RuntimeException();
+        if ((mainTestClass.Aflag | mainTestClass.Bflag) > 1) throw new RuntimeException();
 
         for (Method m : methods) {
             if (m.isAnnotationPresent(BeforeSuite.class)) {
                 m.invoke(null);
             }
             if (m.isAnnotationPresent(Test.class)) {
-                arr.add(m);
+                methodList.add(m);
             }
         }
 
-        arr.sort((o1, o2) -> {
+        methodList.sort((o1, o2) -> {
             return o1.getAnnotation(Test.class).priority() - o2.getAnnotation(Test.class).priority();
         });
 
-        for (int i = arr.size() - 1; i >= 0; i--) {
-            System.out.print("Приоритет: " + arr.get(i).getAnnotation(Test.class).priority() + " Тест: ");
-            arr.get(i).invoke(null);
+        for (int i = methodList.size() - 1; i >= 0; i--) {
+            System.out.print("Приоритет: " + methodList.get(i).getAnnotation(Test.class).priority() + " Тест: ");
+            methodList.get(i).invoke(null);
         }
 
         for (Method m : methods) {
